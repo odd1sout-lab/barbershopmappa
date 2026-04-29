@@ -26,8 +26,8 @@ const saved = localStorage.getItem('blade-theme') || 'dark';
 setTheme(saved);
 
 // Schedule data
-const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-const times = ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const times = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
 // DB link
 // https://docs.google.com/spreadsheets/d/1jXKz_qHcsQQzFAolH8s18QhYP18JfQme2FsEYzMn8gs/edit?gid=0#gid=0
 const SHEET_URL = "https://opensheet.elk.sh/1jXKz_qHcsQQzFAolH8s18QhYP18JfQme2FsEYzMn8gs/Sheet1";
@@ -56,8 +56,14 @@ function getSlotFromSheet(masterName, dayIdx, time) {
   if (!scheduleData.length) return 'free';
 
   const today = new Date();
-  const target = new Date();
-  target.setDate(today.getDate() + dayIdx);
+  let day = today.getDay();
+  if (day === 0) day = 7;
+
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (day - 1));
+
+  const target = new Date(monday);
+  target.setDate(monday.getDate() + dayIdx);
 
   const yyyy = target.getFullYear();
   const mm = String(target.getMonth() + 1).padStart(2, '0');
