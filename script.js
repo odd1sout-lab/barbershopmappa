@@ -117,3 +117,74 @@ function renderSchedule(masterName, btn) {
 }
 
 loadScheduleFromSheet();
+
+// Booking modal
+
+function openBooking(masterName, time = '') {
+  const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+
+  if (masterName) {
+    document.getElementById('bookMaster').value = masterName;
+  }
+
+  if (time) {
+    document.getElementById('bookTime').value = time;
+  }
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('bookDate').value = `${yyyy}-${mm}-${dd}`;
+
+  document.getElementById('msgPreview').style.display = 'none';
+
+  modal.show();
+}
+
+function buildMessage() {
+  const name    = document.getElementById('bookName').value.trim();
+  const master  = document.getElementById('bookMaster').value;
+  const date    = document.getElementById('bookDate').value;
+  const time    = document.getElementById('bookTime').value;
+  const service = document.getElementById('bookService').value;
+  const comment = document.getElementById('bookComment').value.trim();
+
+  let dateFormatted = date;
+
+  if (date) {
+    const d = new Date(date);
+    const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateFormatted = d.toLocaleDateString('ru-RU', opts);
+  }
+
+  let msg = `*Запись в барбершоп MAPPA*\n`;
+  msg += `━━━━━━━━━━━━━━━━━\n`;
+
+  if (name)    msg += `Имя: ${name}\n`;
+  if (master)  msg += `Мастер: ${master}\n`;
+  if (date)    msg += `Дата: ${dateFormatted}\n`;
+  if (time)    msg += `Время: ${time}\n`;
+  if (service) msg += `Услуга: ${service}\n`;
+  if (comment) msg += `Комментарий: ${comment}\n`;
+
+  msg += `━━━━━━━━━━━━━━━━━\n`;
+  msg += `Прошу подтвердить запись. Спасибо!`;
+
+  return msg;
+}
+
+function previewMessage() {
+  const msg = buildMessage();
+  document.getElementById('msgText').textContent = msg;
+  document.getElementById('msgPreview').style.display = 'block';
+}
+
+function sendWhatsApp() {
+  const msg = buildMessage();
+  const phone = '996558065411';
+
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+
+  window.open(url, '_blank');
+}
